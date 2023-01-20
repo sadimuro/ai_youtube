@@ -5,7 +5,7 @@ from aiogram.dispatcher import FSMContext
 from pytube import YouTube
 import config 
 import logging
-
+import os
 
 bot = Bot(config.token)
 dp = Dispatcher(bot, storage=MemoryStorage())
@@ -51,7 +51,7 @@ async def download_video_state(msg:types.Message, state:FSMContext):
         await bot.send_video(msg.chat.id, video)
     except Exception as error:
         await msg.answer(f"Произошла ошибка, повторите еще раз. {error}")
-    
+    os.remove(f'video/{title}')
     await state.finish()
 
 @dp.message_handler(state=DownloadAudio.download)
@@ -64,6 +64,7 @@ async def download_audio_state(msg:types.Message, state:FSMContext):
         await bot.send_audio(msg.chat.id, audio)
     except Exception as error:
         await msg.answer(f"Произошла ошибка, повторите еще раз. {error}")
+    os.remove(f'audio/{title}')
     await state.finish()
 
 executor.start_polling(dp)
